@@ -10,67 +10,83 @@
 
 body{
     margin:0;
-    font-family:Arial, sans-serif;
-    line-height:1.7;
+    font-family:Arial,sans-serif;
+    background:#f7f4ef;
     color:#333;
+    line-height:1.6;
 }
 
-.hero{
-    background:#8b6b47;
+header{
+    background:#7a5a3a;
     color:white;
     text-align:center;
-    padding:80px 20px;
+    padding:70px 20px;
 }
 
-.hero h1{
+header h1{
     font-size:3rem;
     margin-bottom:10px;
 }
 
-.hero p{
-    font-size:1.2rem;
-}
-
-.content{
+.container{
     max-width:900px;
     margin:auto;
-    padding:50px 25px;
+    padding:40px 20px;
 }
 
-h2{
-    color:#8b6b47;
+.card{
+    background:white;
+    border-radius:12px;
+    padding:30px;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
 }
 
-.buttons{
-    text-align:center;
-    margin:40px 0;
-}
-
-.btn{
-    display:inline-block;
-    padding:14px 28px;
-    margin:10px;
-    background:#8b6b47;
-    color:white;
-    text-decoration:none;
-    border-radius:30px;
+label{
+    display:block;
+    margin-top:15px;
+    margin-bottom:5px;
     font-weight:bold;
 }
 
-.btn:hover{
-    background:#6f5437;
+input,
+textarea,
+select{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    box-sizing:border-box;
 }
 
-footer{
-    background:#333;
-    color:white;
-    text-align:center;
-    padding:25px;
-    margin-top:50px;
+textarea{
+    min-height:180px;
 }
 
-footer a{
+button{
+    margin-top:25px;
+    background:#7a5a3a;
     color:white;
+    border:none;
+    padding:15px 25px;
+    border-radius:30px;
+    cursor:pointer;
+    font-size:1rem;
+}
+
+button:hover{
+    background:#5d432a;
+}
+
+.info{
+    background:#fff8e8;
+    padding:15px;
+    border-left:4px solid #b8860b;
+    margin-bottom:25px;
+}
+
+#mensagem{
+    margin-top:20px;
+    font-weight:bold;
 }
 
 </style>
@@ -78,23 +94,198 @@ footer a{
 
 <body>
 
-<section class="hero">
+<header>
 
 <h1>Vozes do Outeiro</h1>
 
-<p>
-25 anos de Memórias, Pessoas e Comunidade
-</p>
+<p>25 anos de Memórias, Pessoas e Comunidade</p>
 
-</section>
+</header>
 
-<section class="content">
+<div class="container">
+
+<div class="card">
 
 <h2>Celebração e Memória</h2>
 
 <p>
-Em 2026 assinalam-se 25 anos do início do Projeto Arqueológico Outeiro do Circo, uma trajetória marcada pela investigação arqueológica, pela descoberta científica, pela partilha de conhecimento e pelo envolvimento da comunidade.
+A investigação desenvolvida no Outeiro do Circo ao longo dos anos contou com a ajuda indispensável de muitos voluntários, investigadores, habitantes de Mombeja e arredores e amigos.
+Todos contribuíram de forma inestimável para a construção desta história coletiva.
 </p>
 
 <p>
-Ao longo deste percurso, a investigação desenvolvida no Outeiro do Circo contou com a ajuda indispensável de muitos voluntários, investigadores, habitantes de Mombeja e arredores e amigos do projeto. Todos contribuíram de forma in
+Convidamo-lo a deixar o seu testemunho em texto, fotografia e vídeo para integrar o arquivo digital comemorativo dos 25 anos do Projeto Arqueológico Outeiro do Circo.
+</p>
+
+<div class="info">
+Vídeos recomendados: máximo 2 a 3 minutos.
+</div>
+
+<form id="formulario">
+
+<label>Nome</label>
+<input type="text" id="nome" required>
+
+<label>Localidade</label>
+<input type="text" id="localidade">
+
+<label>Ligação ao Projeto</label>
+<select id="ligacao">
+
+<option>Investigador</option>
+<option>Voluntário</option>
+<option>Estudante</option>
+<option>Habitante local</option>
+<option>Parceiro institucional</option>
+<option>Amigo do projeto</option>
+<option>Outro</option>
+
+</select>
+
+<label>Período de participação</label>
+<input type="text" id="periodo">
+
+<label>Testemunho</label>
+<textarea id="testemunho" required></textarea>
+
+<label>Fotografia</label>
+<input type="file" id="foto" accept="image/*">
+
+<label>Vídeo</label>
+<input type="file" id="video" accept="video/*">
+
+<button type="submit">
+Enviar Testemunho
+</button>
+
+</form>
+
+<div id="mensagem"></div>
+
+</div>
+
+</div>
+
+<script>
+
+const SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbzO4m4JdJM9ocqkTiY8_eOtBmv2dX0xUCLNYb7L7yCgj-fgikDIM54ufjQPvb_Ixg_d/exec";
+
+function ficheiroParaBase64(file){
+
+    return new Promise((resolve,reject)=>{
+
+        if(!file){
+            resolve(null);
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = () => {
+
+            const base64 = reader.result.split(",")[1];
+
+            resolve({
+                nome:file.name,
+                tipo:file.type,
+                base64:base64
+            });
+
+        };
+
+        reader.onerror = reject;
+
+        reader.readAsDataURL(file);
+
+    });
+
+}
+
+document
+.getElementById("formulario")
+.addEventListener("submit", async function(e){
+
+e.preventDefault();
+
+const mensagem =
+document.getElementById("mensagem");
+
+mensagem.innerHTML =
+"⏳ A enviar testemunho...";
+
+try{
+
+const foto =
+await ficheiroParaBase64(
+document.getElementById("foto").files[0]
+);
+
+const video =
+await ficheiroParaBase64(
+document.getElementById("video").files[0]
+);
+
+const dados = {
+
+nome:
+document.getElementById("nome").value,
+
+localidade:
+document.getElementById("localidade").value,
+
+ligacao:
+document.getElementById("ligacao").value,
+
+periodo:
+document.getElementById("periodo").value,
+
+testemunho:
+document.getElementById("testemunho").value,
+
+fotoNome:
+foto ? foto.nome : "",
+
+fotoType:
+foto ? foto.tipo : "",
+
+fotoBase64:
+foto ? foto.base64 : "",
+
+videoNome:
+video ? video.nome : "",
+
+videoType:
+video ? video.tipo : "",
+
+videoBase64:
+video ? video.base64 : ""
+
+};
+
+await fetch(SCRIPT_URL,{
+method:"POST",
+body:JSON.stringify(dados)
+});
+
+mensagem.innerHTML =
+"✅ Muito obrigado. O seu testemunho foi recebido.";
+
+document.getElementById("formulario").reset();
+
+}
+catch(err){
+
+mensagem.innerHTML =
+"❌ Ocorreu um erro. Tente novamente.";
+
+console.error(err);
+
+}
+
+});
+
+</script>
+
+</body>
+</html>
