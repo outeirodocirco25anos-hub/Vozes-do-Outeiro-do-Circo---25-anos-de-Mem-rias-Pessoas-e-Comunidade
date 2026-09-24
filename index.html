@@ -89,27 +89,54 @@ button:hover{
     font-weight:bold;
 }
 
+.botao-blog{
+    background:white;
+    color:#7a5a3a;
+    padding:12px 20px;
+    border-radius:25px;
+    text-decoration:none;
+    font-weight:bold;
+    display:inline-block;
+    margin-top:15px;
+}
+
+.memorias{
+    max-width:1100px;
+    margin:auto;
+    padding:60px 20px;
+}
+
+.grelha{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:25px;
+}
+
+.memoria-card{
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
 </style>
 </head>
 
 <body>
 
 <header>
+
 <h1>Vozes do Outeiro</h1>
 
 <p>25 anos de Memórias, Pessoas e Comunidade</p>
-<p style="margin-top:20px;">
-<a href="https://outeirodocirco.blogspot.com/"
-   target="_blank"
-   style="background:white;
-          color:#7a5a3a;
-          padding:12px 20px;
-          border-radius:25px;
-          text-decoration:none;
-          font-weight:bold;">
-Visitar o Blogue Oficial do Projeto
+
+<a class="botao-blog"
+   href="https://outeirodocirco.blogspot.com/"
+   target="_blank">
+   Visitar o Blogue Oficial do Projeto
 </a>
-</p>
+
+</header>
 
 <div class="container">
 
@@ -139,8 +166,8 @@ Vídeos recomendados: máximo 2 a 3 minutos.
 <input type="text" id="localidade">
 
 <label>Ligação ao Projeto</label>
-<select id="ligacao">
 
+<select id="ligacao">
 <option>Investigador</option>
 <option>Voluntário</option>
 <option>Estudante</option>
@@ -148,7 +175,6 @@ Vídeos recomendados: máximo 2 a 3 minutos.
 <option>Parceiro institucional</option>
 <option>Amigo do projeto</option>
 <option>Outro</option>
-
 </select>
 
 <label>Período de participação</label>
@@ -175,6 +201,56 @@ Enviar Testemunho
 
 </div>
 
+<section class="memorias">
+
+<h2 style="text-align:center;color:#7a5a3a;">
+Memórias Partilhadas
+</h2>
+
+<p style="text-align:center;max-width:800px;margin:auto;">
+Os testemunhos aqui publicados representam a diversidade de pessoas que contribuíram para a história do Projeto Arqueológico Outeiro do Circo.
+</p>
+
+<br><br>
+
+<div class="grelha">
+
+<div class="memoria-card">
+
+<h3 style="color:#7a5a3a;">
+Testemunho em preparação
+</h3>
+
+<p style="color:#777;">
+Os primeiros testemunhos serão publicados brevemente.
+</p>
+
+<p>
+Contribua para a construção desta memória coletiva dos 25 anos do Projeto Arqueológico Outeiro do Circo.
+</p>
+
+</div>
+
+<div class="memoria-card">
+
+<h3 style="color:#7a5a3a;">
+25 Anos de Comunidade
+</h3>
+
+<p style="color:#777;">
+Investigação • Voluntariado • Património
+</p>
+
+<p>
+Ao longo de vinte e cinco anos, muitas pessoas contribuíram para a investigação, divulgação e valorização do Outeiro do Circo.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
 <script>
 
 const SCRIPT_URL =
@@ -193,12 +269,10 @@ function ficheiroParaBase64(file){
 
         reader.onload = () => {
 
-            const base64 = reader.result.split(",")[1];
-
             resolve({
                 nome:file.name,
                 tipo:file.type,
-                base64:base64
+                base64:reader.result.split(",")[1]
             });
 
         };
@@ -211,17 +285,14 @@ function ficheiroParaBase64(file){
 
 }
 
-document
-.getElementById("formulario")
+document.getElementById("formulario")
 .addEventListener("submit", async function(e){
 
 e.preventDefault();
 
-const mensagem =
-document.getElementById("mensagem");
+const mensagem = document.getElementById("mensagem");
 
-mensagem.innerHTML =
-"⏳ A enviar testemunho...";
+mensagem.innerHTML = "⏳ A enviar testemunho...";
 
 try{
 
@@ -237,38 +308,19 @@ document.getElementById("video").files[0]
 
 const dados = {
 
-nome:
-document.getElementById("nome").value,
+nome: document.getElementById("nome").value,
+localidade: document.getElementById("localidade").value,
+ligacao: document.getElementById("ligacao").value,
+periodo: document.getElementById("periodo").value,
+testemunho: document.getElementById("testemunho").value,
 
-localidade:
-document.getElementById("localidade").value,
+fotoNome: foto ? foto.nome : "",
+fotoType: foto ? foto.tipo : "",
+fotoBase64: foto ? foto.base64 : "",
 
-ligacao:
-document.getElementById("ligacao").value,
-
-periodo:
-document.getElementById("periodo").value,
-
-testemunho:
-document.getElementById("testemunho").value,
-
-fotoNome:
-foto ? foto.nome : "",
-
-fotoType:
-foto ? foto.tipo : "",
-
-fotoBase64:
-foto ? foto.base64 : "",
-
-videoNome:
-video ? video.nome : "",
-
-videoType:
-video ? video.tipo : "",
-
-videoBase64:
-video ? video.base64 : ""
+videoNome: video ? video.nome : "",
+videoType: video ? video.tipo : "",
+videoBase64: video ? video.base64 : ""
 
 };
 
@@ -282,8 +334,7 @@ mensagem.innerHTML =
 
 document.getElementById("formulario").reset();
 
-}
-catch(err){
+}catch(err){
 
 mensagem.innerHTML =
 "❌ Ocorreu um erro. Tente novamente.";
@@ -295,66 +346,6 @@ console.error(err);
 });
 
 </script>
-<section style="padding:60px 20px; max-width:1100px; margin:auto;">
 
-<h2 style="text-align:center; color:#7a5a3a; margin-bottom:40px;">
-Memórias Partilhadas
-</h2>
-
-<p style="text-align:center; max-width:800px; margin:0 auto 40px auto;">
-Os testemunhos aqui publicados representam a diversidade de pessoas que contribuíram para a história do Projeto Arqueológico Outeiro do Circo. Investigadores, voluntários, habitantes da região, estudantes e amigos ajudam-nos a construir uma biografia coletiva destes 25 anos.
-</p>
-
-<div style="
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-gap:25px;
-">
-
-<div style="
-background:white;
-padding:25px;
-border-radius:12px;
-box-shadow:0 4px 15px rgba(0,0,0,.08);
-">
-
-<h3 style="color:#7a5a3a;">
-Testemunho em preparação
-</h3>
-
-<p style="font-size:0.9rem; color:#777;">
-Os primeiros testemunhos serão publicados brevemente.
-</p>
-
-<p>
-Contribua para a construção desta memória coletiva dos 25 anos do Projeto Arqueológico Outeiro do Circo.
-</p>
-
-</div>
-
-<div style="
-background:white;
-padding:25px;
-border-radius:12px;
-box-shadow:0 4px 15px rgba(0,0,0,.08);
-">
-
-<h3 style="color:#7a5a3a;">
-25 Anos de Comunidade
-</h3>
-
-<p style="font-size:0.9rem; color:#777;">
-Investigação • Voluntariado • Património
-</p>
-
-<p>
-Ao longo de vinte e cinco anos, muitas pessoas contribuíram para a investigação, divulgação e valorização do Outeiro do Circo.
-</p>
-
-</div>
-
-</div>
-
-</section>
 </body>
 </html>
